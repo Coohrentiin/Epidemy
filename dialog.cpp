@@ -23,23 +23,23 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
     scene->addLine(BottomLine,mypen);
 
 
-    int ItemCount = 5;
+    int ItemCount = 20;
     for(int i = 0; i < ItemCount; i++)
     {
         States state=States(State::Sick);
         Person *item = new Person(width,height,state);
         scene->addItem(item);
     }
-    for(int i = 0; i < ItemCount; i++)
-    {
-        States state=States(State::Healthy);
-        Person *item = new Person(width,height,state);
-        scene->addItem(item);
-    }
+//    for(int i = 0; i < ItemCount; i++)
+//    {
+//        States state=States(State::Healthy);
+//        Person *item = new Person(width,height,state);
+//        scene->addItem(item);
+//    }
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), scene,SLOT(advance()));
-    timer->start(100);
+    timer->start(80);
 
 }
 

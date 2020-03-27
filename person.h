@@ -12,6 +12,7 @@ public:
     Person(int width, int heigth, States state);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void setState(States state);
 
 protected:
     void advance(int phase);
