@@ -18,7 +18,7 @@ public:
 //    virtual int type() override;
 protected:
     void advance(int phase);
-    QPointF centerCoordinate(Person aPerson);
+    void globalSetPosition(int angleToAdd, int noiseWidthAngle, qreal xAdditiveStep, qreal yAdditiveStep);
     QPointF centerCoordinate();
     std::vector<Person *> listOfPerson;
 
