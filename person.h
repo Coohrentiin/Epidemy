@@ -9,17 +9,26 @@
 class Person : public QGraphicsItem
 {
 public:
-    Person(int width, int heigth, States state);
+    Person(int graphic_width, int graphic_heigth, States person_state, int radius);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     void setState(States state);
-
+    void setListOfPerson(std::vector<Person *> list);
+    bool collision();
+//    virtual int type() override;
 protected:
     void advance(int phase);
+    QPointF centerCoordinate(Person aPerson);
+    QPointF centerCoordinate();
+    std::vector<Person *> listOfPerson;
 
 private:
     qreal angle;
     qreal speed;
+    int radius;
+    int graphic_width;
+    int graphic_height;
+
     States person_state;
     void DoCollision();
 };

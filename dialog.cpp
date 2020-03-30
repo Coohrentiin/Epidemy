@@ -12,6 +12,7 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     scene->setSceneRect(-width/2,-height/2,width,height);
     QPen mypen = QPen(Qt::blue);
+//    mypen.setWidth(5);
     QLineF TopLine(scene->sceneRect().topLeft(), scene->sceneRect().topRight());
     QLineF LeftLine(scene->sceneRect().topLeft(), scene->sceneRect().bottomLeft());
     QLineF RightLine(scene->sceneRect().topRight(), scene->sceneRect().bottomRight());
@@ -22,24 +23,29 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
     scene->addLine(RightLine,mypen);
     scene->addLine(BottomLine,mypen);
 
-
-    int ItemCount = 20;
+    std::vector<Person *> listOfItems;
+    int ItemCount = 3;
+    int radius=10;
     for(int i = 0; i < ItemCount; i++)
     {
         States state=States(State::Sick);
-        Person *item = new Person(width,height,state);
+        Person *item = new Person(width,height,state,radius);
+        listOfItems.push_back(item);
         scene->addItem(item);
     }
+    for (int i=0; i<ItemCount;i++) {
+        listOfItems[i]->setListOfPerson(listOfItems);
+    }
+
 //    for(int i = 0; i < ItemCount; i++)
 //    {
 //        States state=States(State::Healthy);
 //        Person *item = new Person(width,height,state);
 //        scene->addItem(item);
 //    }
-
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), scene,SLOT(advance()));
-    timer->start(80);
+    timer->start(100);
 
 }
 
