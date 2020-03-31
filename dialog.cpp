@@ -23,17 +23,22 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
     scene->addLine(RightLine,mypen);
     scene->addLine(BottomLine,mypen);
 
+
     std::vector<Person *> listOfItems;
-    int ItemCount = 3;
+    int ItemCount = 2;
     int radius=10;
     for(int i = 0; i < ItemCount; i++)
     {
-        States state=States(State::Sick);
+        States state=States(State::Healthy);
         Person *item = new Person(width,height,state,radius);
         listOfItems.push_back(item);
         scene->addItem(item);
     }
-    for (int i=0; i<ItemCount;i++) {
+    States state=States(State::Sick);
+    Person *item = new Person(width,height,state,radius);
+    listOfItems.push_back(item);
+    scene->addItem(item);
+    for (int i=0; i<ItemCount+1;i++) {
         listOfItems[i]->setListOfPerson(listOfItems);
     }
 

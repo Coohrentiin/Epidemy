@@ -28,12 +28,14 @@ Person::Person(int width, int heigth, States state, int radius)
     StartX = (( qrand() % (2* (width-20) ) ) - (width-20) )/2;
     StartY = (( qrand() % (2* (heigth-20) ) ) - (heigth-20) )/2;
     setPos(StartX,StartY);
-//    setRotation( rotation() -60 );
+
+//    disease=Disease();
+
 }
 
-//virtual int Person::type() override{
-//    int n=42;
-//    return n;
+//Person::Person(int graphic_width, int graphic_heigth, States person_state, int radius, Disease disease){
+//    this->disease=disease;
+//    Person(graphic_width, graphic_heigth, person_state, radius);
 //}
 
 QRectF Person::boundingRect() const
@@ -45,18 +47,20 @@ void Person::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 {
     QRectF rec = boundingRect();
     QBrush Brush(Qt::gray);
-    //basic Collision detection
     QPen pen;
     pen.setBrush(Qt::SolidPattern);
     painter->setPen(pen);
     painter->setBrush(person_state.getColor());
-//    painter->drawRect(rec);
     painter->drawEllipse(rec);
 
 }
 
 void Person::setState(States state){
     person_state=state;
+}
+
+States Person::getState(){
+    return person_state;
 }
 
 void Person::setListOfPerson(std::vector<Person *> list){
@@ -69,7 +73,7 @@ void Person::advance(int phase)
 {
     if(!phase) return;
     const QList<QGraphicsItem *> collide = scene()->items(QPolygonF()<<mapToParent(0,0)<<mapToParent(10,0)<<mapToParent(0,10)<<mapToParent(10,10));
-    bool isACollision=collision();
+    collision();
     setPos(mapToParent(0,(speed)));
 }
 
@@ -81,9 +85,6 @@ void Person::advance(int phase)
  */
 bool Person::collision(){
     bool collide=false;
-    QPointF point = this->pos();
-    QPointF newpoint = mapToScene(0,0);
-
 
     //Position in the scene of the sphere center:
     QPointF center_point=this->centerCoordinate();
@@ -102,13 +103,13 @@ bool Person::collision(){
     if(save_angle<90){
         //Check collision with down:
         if( Y+n*radius> (qreal) graphic_height/2){
-            printf("<- u to d  collision down");
+//            printf("<- u to d  collision down");
             globalSetPosition(90, 20, 0, 0);
             collide=true;
         }
         //Check collision with left:
         else if( X-n*radius < (qreal) -graphic_width/2){
-            printf("<- u to d collision left");
+//            printf("<- u to d collision left");
             globalSetPosition(180, 20, 0, 0);
             collide=true;
         }
@@ -117,13 +118,13 @@ bool Person::collision(){
     else if(save_angle<180 && save_angle>90){
         //Check collision with up:
         if( Y-n*radius< (qreal) -graphic_height/2){
-            printf("<- d to u collision up");
+//            printf("<- d to u collision up");
             globalSetPosition(-90, 20, 0, 0);
             collide=true;
         }
         //Check collision with left:
         else if( X-n*radius < (qreal) -graphic_width/2){
-            printf("<- d to u collision left");
+//            printf("<- d to u collision left");
             globalSetPosition(180, 20, 0, 0);
             collide=true;
         }
@@ -132,13 +133,13 @@ bool Person::collision(){
     else if(save_angle<270 && save_angle>180){
         //Check collision with up:
         if( Y-n*radius< (qreal) -graphic_height/2){
-            printf("-> d to u collision up");
+//            printf("-> d to u collision up");
             globalSetPosition(90, 20, 0, 0);
             collide=true;
         }
         //Check collision with right:
         else if( X+n*radius > (qreal) graphic_width/2){
-            printf("-> d to u collision right");
+//            printf("-> d to u collision right");
             globalSetPosition(180, 20, 0, 0);
             collide=true;
         }
@@ -147,13 +148,13 @@ bool Person::collision(){
     else if (save_angle>270){
         //Check collision with down:
         if( Y+n*radius> (qreal) graphic_height/2){
-            printf("-> u to d collision down");
+//            printf("-> u to d collision down");
             globalSetPosition(-90, 20, 0, 0);
             collide=true;
         }
         //Check collision with right:
         else if( X+n*radius > (qreal) graphic_width/2){
-            printf("-> d to u collision right");
+//            printf("-> d to u collision right");
             globalSetPosition(180, 20, 0, 0);
             collide=true;
         }
@@ -171,11 +172,12 @@ bool Person::collision(){
                 qreal distance=sqrt( pow((X-aPersonCenter.x()),2) + pow((Y-aPersonCenter.y()),2));
 
                 if(distance<2*radius){
-                    printf("distance=%f \n",distance);
+//                    printf("distance=%f \n",distance);
                     //Collision with another sphere
                     globalSetPosition(180, 10, 0, 0);
                     aPerson->globalSetPosition(180, 10, 0, speed/2);
                     collide=true;
+                    contamination(aPerson);
                 }
             }
         }
@@ -217,4 +219,28 @@ QPointF Person::centerCoordinate(){
     qreal Y= this->pos().y()+b;
     QPointF point(X,Y);
     return point;
+}
+
+bool Person::contamination(Person * otherPerson){
+    bool isContamination=false;
+    if(this->person_state.getValue()>otherPerson->getState().getValue()){
+        //"This" is contaminating otherPerson
+        printf("contamination %d to %d\n",person_state.getValue(),otherPerson->getState().getValue());
+        otherPerson->nextState();
+        isContamination=true;
+    }
+    else if (this->person_state.getValue()<otherPerson->getState().getValue()){
+        //OtherPerson is contaminating "This"
+        printf("contamination %d to %d\n",otherPerson->getState().getValue(),person_state.getValue());
+        this->nextState();
+        isContamination=true;
+    }
+    if(isContamination){
+        printf("        now: %d and %d\n",otherPerson->getState().getValue(),person_state.getValue());
+    }
+    return isContamination;
+}
+
+void Person::nextState(){
+    person_state.nextState();
 }

@@ -4,3 +4,4 @@ Disease::Disease()
 {
 
 }
+
