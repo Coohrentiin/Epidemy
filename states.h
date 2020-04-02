@@ -6,25 +6,35 @@
 #include <QGraphicsScene>
 #include <iostream>
 
+#include "disease.h"
+
 enum State { Dead=Qt::black, Healthy=Qt::green, Carrier=Qt::yellow, Sick=Qt::red, Cared=Qt::blue};
 
 class States{
     public:
+        //Constructors
         States();
         States(State state);
+        States(State state, Disease * disease);
+
+        //Methods and functions
         void print();
         Qt::GlobalColor getColor();
         int getValue();
-
-        bool operator>(State const& otherState) const;
+        State getState();
         int stateToInt(State state);
-        State IntToState(int value);
-        void nextState();
+        int nextState(int value);
+        void setState(State newState);
+
+        //Operators
+        bool operator>(State const& otherState) const;
 
     protected:
         int value;
         State state;
         Qt::GlobalColor color;
+        Disease * theDisease;
+        int aDiseaseParameter;
 };
 
 #endif // STATES_H

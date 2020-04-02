@@ -6,6 +6,7 @@
 #include <QtGui>
 #include <vector>
 #include "person.h"
+#include "disease.h"
 
 namespace Ui {
     class Dialog;

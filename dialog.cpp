@@ -25,23 +25,30 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
 
 
     std::vector<Person *> listOfItems;
-    int ItemCount = 2;
     int radius=10;
-    for(int i = 0; i < ItemCount; i++)
+
+    int nbHealthy = 20;
+    int nbSick = 10;
+    Disease * sceneDisease=new Disease();
+    for(int i = 0; i < nbHealthy; i++)
     {
-        States state=States(State::Healthy);
+        States state=States(State::Healthy,sceneDisease);
         Person *item = new Person(width,height,state,radius);
         listOfItems.push_back(item);
         scene->addItem(item);
     }
-    States state=States(State::Sick);
-    Person *item = new Person(width,height,state,radius);
-    listOfItems.push_back(item);
-    scene->addItem(item);
-    for (int i=0; i<ItemCount+1;i++) {
+    for(int i = 0; i < nbSick; i++)
+    {
+        States state=States(State::Sick,sceneDisease);
+        Person *item = new Person(width,height,state,radius);
+        item->nextState();
+        listOfItems.push_back(item);
+        scene->addItem(item);
+    }
+    for (int i=0; i<nbHealthy+nbSick;i++) {
         listOfItems[i]->setListOfPerson(listOfItems);
     }
-
+    printf("\n\n ############ Simulation begining #################### \n\n");
 //    for(int i = 0; i < ItemCount; i++)
 //    {
 //        States state=States(State::Healthy);

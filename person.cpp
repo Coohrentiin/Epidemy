@@ -1,4 +1,5 @@
 #include "person.h"
+#include "disease.h"
 #include <cmath>
 #include <iostream>
 
@@ -30,6 +31,7 @@ Person::Person(int width, int heigth, States state, int radius)
     setPos(StartX,StartY);
 
 //    disease=Disease();
+    timeDiseaseParameter=-1;
 
 }
 
@@ -75,6 +77,9 @@ void Person::advance(int phase)
     const QList<QGraphicsItem *> collide = scene()->items(QPolygonF()<<mapToParent(0,0)<<mapToParent(10,0)<<mapToParent(0,10)<<mapToParent(10,10));
     collision();
     setPos(mapToParent(0,(speed)));
+    if(timeDiseaseParameter!=-1){
+        timeDiseaseParameter=person_state.nextState(timeDiseaseParameter);
+    }
 }
 
 
@@ -174,8 +179,8 @@ bool Person::collision(){
                 if(distance<2*radius){
 //                    printf("distance=%f \n",distance);
                     //Collision with another sphere
-                    globalSetPosition(180, 10, 0, 0);
-                    aPerson->globalSetPosition(180, 10, 0, speed/2);
+                    globalSetPosition(180, 10, 0, (radius+speed)/4);
+                    aPerson->globalSetPosition(180, 10, 0, (radius+speed)/4);
                     collide=true;
                     contamination(aPerson);
                 }
@@ -223,24 +228,21 @@ QPointF Person::centerCoordinate(){
 
 bool Person::contamination(Person * otherPerson){
     bool isContamination=false;
-    if(this->person_state.getValue()>otherPerson->getState().getValue()){
+    if( (this->getState().getState()==State::Carrier || this->getState().getState()==State::Sick || this->getState().getState()==State::Dead) && otherPerson->getState().getState()==State::Healthy){
         //"This" is contaminating otherPerson
-        printf("contamination %d to %d\n",person_state.getValue(),otherPerson->getState().getValue());
+//        printf("contamination %d to %d\n",person_state.getValue(),otherPerson->getState().getValue());
         otherPerson->nextState();
         isContamination=true;
     }
-    else if (this->person_state.getValue()<otherPerson->getState().getValue()){
+    else if ( (otherPerson->getState().getState()==State::Carrier || otherPerson->getState().getState()==State::Sick || otherPerson->getState().getState()==State::Dead) && this->getState().getState()==State::Healthy){
         //OtherPerson is contaminating "This"
-        printf("contamination %d to %d\n",otherPerson->getState().getValue(),person_state.getValue());
+//        printf("contamination %d to %d\n",otherPerson->getState().getValue(),person_state.getValue());
         this->nextState();
         isContamination=true;
-    }
-    if(isContamination){
-        printf("        now: %d and %d\n",otherPerson->getState().getValue(),person_state.getValue());
     }
     return isContamination;
 }
 
 void Person::nextState(){
-    person_state.nextState();
+    timeDiseaseParameter=person_state.nextState(timeDiseaseParameter);
 }

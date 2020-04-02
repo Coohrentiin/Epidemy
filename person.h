@@ -5,14 +5,14 @@
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include "states.h"
-#include "disease.h"
+//#include "disease.h"
 
 class Person : public QGraphicsItem
 {
 public:
     //Constructors:
     Person(int graphic_width, int graphic_heigth, States person_state, int radius);
-//    Person(int graphic_width, int graphic_heigth, States person_state, int radius, Disease disease);
+    Person(int graphic_width, int graphic_heigth, States person_state, int radius, Disease disease);
 
     //Public methods for drawing
     QRectF boundingRect() const;
@@ -25,8 +25,10 @@ public:
     void setListOfPerson(std::vector<Person *> list);
 
     //Getter Setter
-    void setState(States state);
+    void setState(States astate);
     States getState();
+
+    void nextState();
 
 protected:
     //Movement fonctions and methods
@@ -34,7 +36,6 @@ protected:
     void globalSetPosition(int angleToAdd, int noiseWidthAngle, qreal xAdditiveStep, qreal yAdditiveStep);
     bool collision();
     bool contamination(Person * otherPerson);
-    void nextState();
     QPointF centerCoordinate();
 
 private:
@@ -42,14 +43,14 @@ private:
     qreal angle;
     qreal speed;
     int radius;
-
+    int timeDiseaseParameter;
     //Screen definition attributs
     int graphic_width;
     int graphic_height;
 
     //Outside informations
     States person_state;
-//    Disease disease;
+    Disease disease;
 };
 
 #endif // Person_H
