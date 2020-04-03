@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
+#include "ui_dialog.h"
 //#include "state.h"
 
 class Disease
@@ -12,6 +13,7 @@ class Disease
 
 public:
     Disease();
+    Disease(Ui::Dialog * ui);
     Disease(double contaminationPb, double morbidityPb, double expectedSickness, double expectedCare, double expectedDeath);
     double getContaminationPb();
     double getMorbidityPb();
@@ -34,6 +36,8 @@ private:
     int numberOfCarrier;
     int numberOfCared;
     int numberOfDead;
+
+    Ui::Dialog * gui_param;
 };
 
 #endif // DISEASE_H

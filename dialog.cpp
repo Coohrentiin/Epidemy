@@ -8,8 +8,8 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
 
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
-
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    ui->information->setText("Coucou");
     scene->setSceneRect(-width/2,-height/2,width,height);
     QPen mypen = QPen(Qt::blue);
 //    mypen.setWidth(5);
@@ -29,7 +29,7 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
 
     int nbHealthy = 20;
     int nbSick = 10;
-    Disease * sceneDisease=new Disease();
+    Disease * sceneDisease=new Disease(ui);
     for(int i = 0; i < nbHealthy; i++)
     {
         States state=States(State::Healthy,sceneDisease);
