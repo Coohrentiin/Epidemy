@@ -8,7 +8,7 @@
 
 #include "disease.h"
 
-enum State { Dead=Qt::black, Healthy=Qt::green, Carrier=Qt::yellow, Sick=Qt::red, Cared=Qt::blue};
+enum State { Dead=Qt::black, Healthy=Qt::green, Carrier=Qt::cyan, Sick=Qt::red, Cared=Qt::blue};
 
 class States{
     public:
@@ -29,7 +29,8 @@ class States{
         //Operators
         bool operator>(State const& otherState) const;
 
-    protected:
+        void nextDay();
+protected:
         int value;
         State state;
         Qt::GlobalColor color;

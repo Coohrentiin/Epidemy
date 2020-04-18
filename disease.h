@@ -13,7 +13,7 @@ class Disease
 
 public:
     Disease();
-    Disease(Ui::Dialog * ui);
+    Disease(Ui::Dialog * ui, int total);
     Disease(double contaminationPb, double morbidityPb, double expectedSickness, double expectedCare, double expectedDeath);
     double getContaminationPb();
     double getMorbidityPb();
@@ -23,6 +23,12 @@ public:
     void addState(int state);
     void rmState(int state);
     void print();
+    void PrintPlot(Ui::Dialog *ui);
+    void PrintPlotInit(Ui::Dialog *ui);
+
+    void nextDay();
+
+    void SetData();
 
 private:
     double contaminationPb;
@@ -37,6 +43,16 @@ private:
     int numberOfCared;
     int numberOfDead;
 
+    int total_number;
+    QVector<double> days;
+    QVector<double> healthyList;
+    QVector<double> sickList;
+    QVector<double> carrierList;
+    QVector<double> caredList;
+    QVector<double> deadList;
+
+    int day;
+    int X_range;
     Ui::Dialog * gui_param;
 };
 

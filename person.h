@@ -11,8 +11,9 @@ class Person : public QGraphicsItem
 {
 public:
     //Constructors:
-    Person(int graphic_width, int graphic_heigth, States person_state, int radius);
-    Person(int graphic_width, int graphic_heigth, States person_state, int radius, Disease disease);
+    Person(int graphic_width, int graphic_heigth, States person_state, int radius, int x, int y, bool mobility);
+    Person(int graphic_width, int graphic_heigth, States person_state, int radius, bool mobility);
+    Person(int graphic_width, int graphic_heigth, States person_state, int radius, Disease disease, int name);
 
     //Public methods for drawing
     QRectF boundingRect() const;
@@ -27,8 +28,9 @@ public:
     //Getter Setter
     void setState(States astate);
     States getState();
-
+    bool getMobility();
     void nextState();
+    int getSpeed();
 
 protected:
     //Movement fonctions and methods
@@ -47,7 +49,10 @@ private:
     //Screen definition attributs
     int graphic_width;
     int graphic_height;
+    int name;
 
+    bool randomPosition;
+    bool mobility;
     //Outside informations
     States person_state;
     Disease disease;

@@ -3,7 +3,7 @@ QT       += core gui
 TARGET = Bounce
 TEMPLATE = app
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 CONFIG += c++11
 
@@ -23,12 +23,14 @@ SOURCES += \
     main.cpp \
     dialog.cpp \
     person.cpp \
+    qcustomplot.cpp \
     states.cpp
 
 HEADERS += \
     dialog.h \
     disease.h \
     person.h \
+    qcustomplot.h \
     states.h
 
 FORMS += \

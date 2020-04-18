@@ -64,7 +64,7 @@ States::States(State state, Disease * disease){
             //he will die, let choose in how many days:
             randomNumber=rand()%999+1;
             float u=((float) randomNumber)/1000;
-            int k=(int)(-log(1-u)*theDisease->getexpectedDeath());
+            int k=100+(int)(-log(1-u)*theDisease->getexpectedDeath());
             printf("Sick to dead in %d day \n",k);
             this->aDiseaseParameter=(-k-2); //from -k-2 to -2
         }
@@ -72,7 +72,7 @@ States::States(State state, Disease * disease){
             //he will survive, let choose in how many days:
             randomNumber=rand()%100;
             float u=((float) randomNumber)/100;
-            int k=(int)(-log(1-u)*theDisease->getexpectedCare());
+            int k=100+(int)(-log(1-u)*theDisease->getexpectedCare());
             printf("Sick to cared in %d day \n",k);
             this->aDiseaseParameter=(k);
         }
@@ -149,10 +149,12 @@ int States::getValue(){
     return value;
 }
 
-
+void States::nextDay(){
+   theDisease->nextDay();
+   theDisease->print();
+}
 
 int States::nextState(int value){
-    theDisease->print();
     int randomNumber=0;
     switch (state) {
         case State::Healthy:
@@ -163,13 +165,18 @@ int States::nextState(int value){
                 theDisease->rmState(0);
                 randomNumber=rand()%999+1;
                 float u=((float) randomNumber)/1000;
-                int k=(int)(-log(1-u)*theDisease->getexpectedSickness());
+                int k=15+(int)(-log(1-u)*theDisease->getexpectedSickness());
 //                printf("Carrier to sick in %d day \n",k);
                 return(k);
             }
             return(-1);
             break;
         case State::Carrier:
+            if(this->aDiseaseParameter!=-1){
+                int param=aDiseaseParameter;
+                this->aDiseaseParameter=-1;
+                return(param);
+            }
             //exponential law
             if(value>0){
                 return value-1;
@@ -181,36 +188,46 @@ int States::nextState(int value){
 //                printf("    Carrier is now sick");
                 //Choose if he will die or be cared
                 randomNumber=rand()%100;
-                if(randomNumber<100*theDisease->getMorbidityPb()){
+                //randomNumber<=(100*theDisease->getMorbidityPb())
+                if(randomNumber<=(100*theDisease->getMorbidityPb())){
                     //he will die, let choose in how many days:
                     randomNumber=rand()%999+1;
                     float u=((float) randomNumber)/1000;
                     int k=(int)(-log(1-u)*theDisease->getexpectedDeath());
-                    printf("Sick to dead in %d day \n",k);
+//                    printf("Sick to dead in %d day \n",-k-2);
                     return(-k-2); //from -k-2 to -2
                 }
                 else{
                     //he will survive, let choose in how many days:
-                    randomNumber=rand()%100;
-                    float u=((float) randomNumber)/100;
+                    randomNumber=rand()%999+1;
+                    float u=((float) randomNumber)/1000;
                     int k=(int)(-log(1-u)*theDisease->getexpectedCare());
-                    printf("Sick to cared in %d day \n",k);
+//                    printf("Sick to cared in %d day \n",k);
                     return(k);
                 }
             }
             break;
         case State::Sick:
+//            printf("sick: %d \n",value);
             if(this->aDiseaseParameter!=-1){
+//                printf("adiseasparam %d \n",this->aDiseaseParameter);
                 int param=aDiseaseParameter;
-                this->aDiseaseParameter=-1;
+                if(this->aDiseaseParameter>0){
+                    this->aDiseaseParameter=-1;
+                }
+                else{
+                    this->aDiseaseParameter=+1;
+                }
                 return(param);
             }
+
             if(value==-2){
                 //he is dead now
+//                printf("DEAD");
                 setState(State::Dead);
                 theDisease->addState(4);
                 theDisease->rmState(2);
-                return 0;
+                return -1;
             }
             else if(value==0){
                 //he is cared now
@@ -219,10 +236,13 @@ int States::nextState(int value){
                 theDisease->rmState(2);
                 return(-1);
             }
+
             if(value>0){
+//                printf("aie");
                 return(value-1);
             }
             else{
+//                printf("ouf");
                 return(value+1);
             }
             break;

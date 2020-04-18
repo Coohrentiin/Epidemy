@@ -2,13 +2,17 @@
 #include "ui_dialog.h"
 #include "person.h"
 #include "states.h"
+#include <cmath>
+#include <sstream>
+#include <iostream>
 
 Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new Ui::Dialog){
     ui->setupUi(this);
-
+    ui->startButton->setEnabled(false);
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
+    ui->graphicsView->setFixedSize(width+5,height+5);
     ui->information->setText("Coucou");
     scene->setSceneRect(-width/2,-height/2,width,height);
     QPen mypen = QPen(Qt::blue);
@@ -25,22 +29,52 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
 
 
     std::vector<Person *> listOfItems;
-    int radius=10;
+    int radius=5;
 
-    int nbHealthy = 20;
-    int nbSick = 10;
-    Disease * sceneDisease=new Disease(ui);
+    int nbHealthy = 196;
+    int nbSick = 20;
+    int count=0;
+    Disease * sceneDisease=new Disease(ui,nbHealthy+nbSick);
+
+    bool mobility=true;
+
+    int L=(int) sqrt(nbHealthy);
+    printf("%d",L);
+    L=L+1;
+    int dx=width/L;
+    int dy;
+    if(nbHealthy%(L-1) !=0){
+        dy=height/(nbHealthy/(L-1)+2);
+    }
+    else{
+        dy=height/(nbHealthy/(L-1)+1);
+    }
+    int x=-width/2;
+    int y=-height/2;
+    x+=dx;
+    y+=dy;
+    count=0;
     for(int i = 0; i < nbHealthy; i++)
     {
         States state=States(State::Healthy,sceneDisease);
-        Person *item = new Person(width,height,state,radius);
+        Person *item = new Person(width,height,state,radius,x,y,mobility);
+        count+=1;
+        if(count>=L-1){
+            y+=dy;
+            x=-width/2+dx;
+            count=0;
+        }
+        else{
+            x+=dx;
+        }
         listOfItems.push_back(item);
         scene->addItem(item);
     }
     for(int i = 0; i < nbSick; i++)
     {
-        States state=States(State::Sick,sceneDisease);
-        Person *item = new Person(width,height,state,radius);
+        States state=States(State::Carrier,sceneDisease);
+        Person *item = new Person(width,height,state,radius,true);
+        count++;
         item->nextState();
         listOfItems.push_back(item);
         scene->addItem(item);
@@ -49,16 +83,20 @@ Dialog::Dialog(QWidget *parent,int width, int height) :QDialog(parent), ui(new U
         listOfItems[i]->setListOfPerson(listOfItems);
     }
     printf("\n\n ############ Simulation begining #################### \n\n");
-//    for(int i = 0; i < ItemCount; i++)
-//    {
-//        States state=States(State::Healthy);
-//        Person *item = new Person(width,height,state);
-//        scene->addItem(item);
-//    }
+//    QPushButton *bouton = new QPushButton(ui->startButton);
+//    connect(bouton, SIGNAL(clicked()), this, SLOT(advance()));
+    ui->startButton->setEnabled(true);
+
+}
+
+
+void Dialog::on_startButton_clicked()
+{
+    ui->startButton->setEnabled(false);
+//    ui->startButton->setText("Stop simulation");
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), scene,SLOT(advance()));
-    timer->start(100);
-
+    timer->start(50);
 }
 
 Dialog::~Dialog()

@@ -3,7 +3,47 @@
 #include <cmath>
 #include <iostream>
 
-Person::Person(int width, int heigth, States state, int radius)
+Person::Person(int width, int heigth, States state, int radius, int x, int y,bool mobility)
+{
+    //Set scene scale:
+    graphic_width=width;
+    graphic_height=heigth;
+
+    //random start rotation
+    if(mobility){
+        angle=qrand()%360;
+        setRotation(angle);
+    }
+    else{
+        angle = 0;
+        setRotation(angle);
+    }
+    //set the speed
+    if(mobility){
+        speed=4;
+    }
+    else{
+        speed=0;
+    }
+
+    //Set State
+    person_state = state;
+
+    //Set Radius
+    this->radius=radius;
+
+    //random start position
+    int StartX = x;
+    int StartY = y;
+    setPos(StartX,StartY);
+
+//    disease=Disease();
+    timeDiseaseParameter=-1;
+    this->mobility=mobility;
+
+}
+
+Person::Person(int width, int heigth, States state, int radius, bool mobility)
 {
     //Set scene scale:
     graphic_width=width;
@@ -32,6 +72,7 @@ Person::Person(int width, int heigth, States state, int radius)
 
 //    disease=Disease();
     timeDiseaseParameter=-1;
+    this->mobility=mobility;
 
 }
 
@@ -66,7 +107,8 @@ States Person::getState(){
 }
 
 void Person::setListOfPerson(std::vector<Person *> list){
-    for(int i=0; i<list.size(); i++){
+    int n=list.size();
+    for(int i=0; i< n; i++){
         listOfPerson.push_back(list[i]);
     }
 }
@@ -74,12 +116,24 @@ void Person::setListOfPerson(std::vector<Person *> list){
 void Person::advance(int phase)
 {
     if(!phase) return;
-    const QList<QGraphicsItem *> collide = scene()->items(QPolygonF()<<mapToParent(0,0)<<mapToParent(10,0)<<mapToParent(0,10)<<mapToParent(10,10));
+//    const QList<QGraphicsItem *> collide = scene()->items(QPolygonF()<<mapToParent(0,0)<<mapToParent(10,0)<<mapToParent(0,10)<<mapToParent(10,10));
     collision();
+
+    if(person_state.getState()==State::Dead){
+        mobility=false;
+        speed=0;
+    }
+
     setPos(mapToParent(0,(speed)));
+    if(!mobility){
+        setRotation( rotation() );
+    }
+
     if(timeDiseaseParameter!=-1){
         timeDiseaseParameter=person_state.nextState(timeDiseaseParameter);
     }
+
+    person_state.nextDay();
 }
 
 
@@ -179,8 +233,8 @@ bool Person::collision(){
                 if(distance<2*radius){
 //                    printf("distance=%f \n",distance);
                     //Collision with another sphere
-                    globalSetPosition(180, 10, 0, (radius+speed)/4);
-                    aPerson->globalSetPosition(180, 10, 0, (radius+speed)/4);
+                    globalSetPosition(180, 10, 0, (radius+getSpeed())/4);
+                    aPerson->globalSetPosition(180, 10, 0, (radius+aPerson->getSpeed())/4);
                     collide=true;
                     contamination(aPerson);
                 }
@@ -245,4 +299,12 @@ bool Person::contamination(Person * otherPerson){
 
 void Person::nextState(){
     timeDiseaseParameter=person_state.nextState(timeDiseaseParameter);
+}
+
+bool Person::getMobility(){
+    return mobility;
+}
+
+int Person::getSpeed(){
+    return speed;
 }

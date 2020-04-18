@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     QWidget *parent=new QWidget;
     Dialog *w= new Dialog(parent, 600, 600);
 
-    w->showMaximized();
+    w->show();
 
     return a.exec();
 }

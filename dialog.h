@@ -20,6 +20,10 @@ public:
     explicit Dialog(QWidget *parent = 0,int width=200, int height=200);
     explicit Dialog(int width=200, int height=200);
     ~Dialog();
+    void PrintFunction(Ui::Dialog *ui);
+
+private slots:
+    void on_startButton_clicked();
 
 private:
     Ui::Dialog *ui;
