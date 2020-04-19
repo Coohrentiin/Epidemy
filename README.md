@@ -12,8 +12,12 @@ To run this project, open the folder/project Epidemy with Qt Creator and run it
 
 ## Steps:
 
-- Create au bouncing system
+- Create a bouncing system
 - Create different ball type: States depending on person infection
+- collide effect
+- contamination between balls
+- Disease implementation
+- Graph ploting 
 
 ##
-30 march 2020
+19th april 2020
